@@ -1,0 +1,26 @@
+{% extends 'database/layout.html' %}
+
+{% block title %}Главная{% endblock %}
+{% block body %}
+<div class="search-bar">
+    <search>
+        <form action="{% url 'search' %}" method="get">
+            <p>Поиск пациента:
+                <input type="text" name="q" placeholder="Введите">
+            <button type="submit">
+                <span class="fa fa-search" aria-hidden="true"></span>
+            </button></p>
+        </form>
+    </search>
+</div>
+<table>
+    {% for el in database %}
+        <tr>
+            <td>
+                {{ el.name }}
+                <button class="buttonel">Провести анкетирование</button>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}
