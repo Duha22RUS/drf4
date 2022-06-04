@@ -9,13 +9,13 @@
   {% for Patient in object_list %}
     <tr>
         <tr>
-              <td>
-                {{ Patient.name }}
-              </td>
-              <td>
-                <a class="btn btn-link" href="{% url 'view_patient' pk=patient.pk %}">Просмотр</a>
-              </td>
-            </tr>
+          <td>
+            {{ Patient.name }}
+            <a class="btn btn-default" href="{% url 'make_answers' pk=Patient.pk %}">{% if not answers %}Анкетировать{% else %}
+                Изменить ответы{% endif %}</a>
+            <a class="btn btn-warn" href="{% url 'edit_patient' pk=Patient.pk %}">Редактировать пациента</a>
+          </td>
+        </tr>
     </tr>
   {% endfor %}
 </table>
