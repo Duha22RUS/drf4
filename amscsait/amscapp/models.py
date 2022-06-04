@@ -9,8 +9,8 @@ class Question(models.Model):
         return self.question_text
 
     class Meta:
-        verbose_name = "Вопрос"
-        verbose_name_plural = "Вопросы"
+        verbose_name = "Вопрос с выбором ответа"
+        verbose_name_plural = "Вопросы с выбором ответа"
 
 
 class Option(models.Model):
@@ -28,8 +28,21 @@ class Option(models.Model):
         verbose_name_plural = "Варианты ответа"
 
 
+class TextQuestion(models.Model):
+    question_text = models.CharField("Текст вопроса", max_length=100)
+    answer = models.CharField("Ответ", max_length=100, blank=True)
+
+    def __str__(self):
+        return self.question_text
+
+    class Meta:
+        verbose_name = "Текстовый вопрос"
+        verbose_name_plural = "Текстовые вопросы"
+
+
 class PatientAnswer(models.Model):
     patient = models.ForeignKey(to="Patient", on_delete=models.CASCADE)
+    text_question = models.ForeignKey(to="TextQuestion", on_delete=models.CASCADE)
     question = models.ForeignKey(to="Question", on_delete=models.CASCADE)
     option = models.ForeignKey(to="Option", on_delete=models.CASCADE)
 

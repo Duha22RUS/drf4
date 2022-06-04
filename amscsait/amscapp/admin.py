@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Option, Patient, PatientAnswer, Question
+from .models import Option, Patient, PatientAnswer, Question, TextQuestion
 
 
 class ChoiceInLineAdmin(admin.TabularInline):
@@ -20,3 +20,6 @@ class PatientAnswerInLineAdmin(admin.TabularInline):
 @admin.register(Patient)
 class PatientAdmin(admin.ModelAdmin):
     inlines = [PatientAnswerInLineAdmin]
+
+
+admin.site.register(TextQuestion)
