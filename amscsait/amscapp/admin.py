@@ -1,15 +1,21 @@
 from django.contrib import admin
-from .models import Patient, Question, Option, Complaint
+from .models import Option, Patient, PatientAnswer, Question
 
 
 class ChoiceInLineAdmin(admin.TabularInline):
     model = Option
+    extra = 0
 
 
+@admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
     inlines = [ChoiceInLineAdmin]
 
 
-admin.site.register(Patient)
-admin.site.register(Complaint)
-admin.site.register(Question, QuestionAdmin)
+class PatientAnswerInLineAdmin(admin.TabularInline):
+    model = PatientAnswer
+
+
+@admin.register(Patient)
+class PatientAdmin(admin.ModelAdmin):
+    inlines = [PatientAnswerInLineAdmin]

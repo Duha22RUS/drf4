@@ -1,0 +1,39 @@
+{% extends 'amscapp/base.html' %}
+
+{% block title %}Главная{% endblock %}
+{% block body %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h1>Главная</h1>
+      </div>
+    </div>
+    <div class="search-bar">
+        <search>
+            <form action="{% url 'search' %}" method="get">
+                <p>Поиск пациента:
+                    <input type="text" name="q" placeholder="Введите">
+                <button type="submit">
+                    <span class="fa fa-search" aria-hidden="true"></span>
+                </button></p>
+            </form>
+        </search>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <table class="table">
+          {% for patient in patients %}
+            <tr>
+              <td>
+                {{ patient.name }}
+              </td>
+              <td>
+                <a class="btn btn-link" href="{% url 'view_patient' pk=patient.pk %}">Просмотр</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}

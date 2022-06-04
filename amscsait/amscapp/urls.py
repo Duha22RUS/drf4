@@ -1,20 +1,15 @@
-from django.contrib import admin
-from django.urls import path, include
-from amscapp.views import PatientCreateView, PatientRUDView, SearchResultsView
 from . import views
-
-from django.views.i18n import JavaScriptCatalog
+from django.urls import path
+from .views import SearchResultsView
 
 urlpatterns = [
-    path('', views.database_home, name='database_home'),
-    path('register', views.register, name='register'),
-    path('login', views.user_login, name='login'),
-    path('exit', views.exit, name='exit'),
-    path('jsi18n', JavaScriptCatalog.as_view(), name='js-catlog'),
-    path('add_patient', views.add_patient, name='add_patient'),
-    path('add_complaint', views.add_complaint, name='add_complaint'),
+    path("", views.index, name="index"),
+    path("new_patient", views.create_patient, name="create_patient"),
+    path("patient/<int:pk>", views.view_patient, name="view_patient"),
+    path("patient/<int:pk>/edit", views.edit_patient, name="edit_patient"),
+    path("patient/<int:pk>/make_answers", views.make_answers, name="make_answers"),
+    path("register", views.register, name="register"),
+    path("login", views.user_login, name="login"),
+    path("exit", views.exit, name="exit"),
     path('search/', SearchResultsView.as_view(), name='search'),
-    path('createpatient/', PatientCreateView.as_view()),
-    path('detailpatient/<int:pk>/', PatientRUDView.as_view()),
-    path('ajax/load-option/', views.load_option, name='ajax_load_option'),
 ]

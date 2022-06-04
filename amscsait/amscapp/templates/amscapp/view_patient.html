@@ -1,0 +1,42 @@
+{% extends 'amscapp/base.html' %}
+
+
+{% block body %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h1>{{ title }}</h1>
+      </div>
+    </div>
+    <div class="row">{{ patient }}</div>
+    <div class="row">
+      {% if answers %}
+        <table class="table">
+          <thead>
+          <tr>
+            <th>Вопрос</th>
+            <th>Ответ</th>
+            <th>Кол-во баллов</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for answer in answers %}
+            <tr>
+              <td>{{ answer.question }}</td>
+              <td>{{ answer.option }}</td>
+              <td>{{ answer.option.score }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <p>Итого: {{ total }}</p>
+      {% endif %}
+    </div>
+    <div class="row">
+      <a class="btn btn-default" href="{% url 'make_answers' pk=patient.pk %}">{% if not answers %}Анкетировать{% else %}
+        Изменить ответы{% endif %}</a>
+    </div>
+    <div class="row"><a class="btn btn-warn" href="{% url 'edit_patient' pk=patient.pk %}">Редактировать пациента</a>
+    </div>
+  </div>
+{% endblock %}

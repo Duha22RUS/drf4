@@ -1,0 +1,22 @@
+{% extends 'amscapp/base.html' %}
+
+{% block title %}Результаты поиска{% endblock %}
+
+{% block body %}
+
+    <h1>Результаты поиска</h1>
+<table>
+  {% for Patient in object_list %}
+    <tr>
+        <tr>
+              <td>
+                {{ Patient.name }}
+              </td>
+              <td>
+                <a class="btn btn-link" href="{% url 'view_patient' pk=patient.pk %}">Просмотр</a>
+              </td>
+            </tr>
+    </tr>
+  {% endfor %}
+</table>
+{% endblock %}
