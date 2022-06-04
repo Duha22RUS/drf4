@@ -9,12 +9,6 @@
       <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <h1>Учет факторов тромбогенного риска</h1>
-        <table>
-          <tr>
-            <td>{{ form.text_question }}</td>
-            <td>{{ form.choices }}</td>
-          </tr>
-        </table>
         {{ form.as_p }}
         <input class="btn btn-primary btn-block" type="submit" value="{{ submit_text|default:'Показать результаты' }}">
       </form>

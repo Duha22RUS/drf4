@@ -33,11 +33,9 @@ class AnswersForm(forms.Form):
             self.fields["question_%s" % question.id].initial = existing_answers.get(
                 question.id, None
             )
-        for tquest in text_question:
-            self.fields["tquest_%s" % tquest.id] = forms.CharField(
-                textquest=tquest.question_text,
-                answer=tquest.answer,
-            )
+        for el in text_question:
+            self.fields = el.question_text
+            self.fields = el.answer
 
     def save(self):
         answers_to_create = []
