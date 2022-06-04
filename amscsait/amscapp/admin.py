@@ -14,6 +14,7 @@ class QuestionAdmin(admin.ModelAdmin):
 
 class PatientAnswerInLineAdmin(admin.TabularInline):
     model = PatientAnswer
+    extra = 0
 
 
 @admin.register(Patient)
