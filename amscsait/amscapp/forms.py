@@ -1,4 +1,4 @@
-from .models import Patient, PatientAnswer, Question
+from .models import Patient, PatientAnswer, Question, TextQuestion
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
@@ -17,6 +17,7 @@ class AnswersForm(forms.Form):
     def __init__(self, *args, instance: Patient, **kwargs):
         self.instance = instance
         super().__init__(*args, **kwargs)
+        text_question = TextQuestion.objects.all()
         questions = Question.objects.all()
         existing_answers = {
             question_id: option_id
@@ -31,6 +32,11 @@ class AnswersForm(forms.Form):
             )
             self.fields["question_%s" % question.id].initial = existing_answers.get(
                 question.id, None
+            )
+        for tquest in text_question:
+            self.fields["tquest_%s" % tquest.id] = forms.CharField(
+                textquest=tquest.question_text,
+                answer=tquest.answer,
             )
 
     def save(self):
