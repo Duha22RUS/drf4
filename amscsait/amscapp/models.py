@@ -41,8 +41,9 @@ class TextQuestion(models.Model):
 
 
 class PatientAnswer(models.Model):
+    date_of_the_survey = models.DateTimeField("Дата роведения анкетирования", auto_now_add=True)
     patient = models.ForeignKey(to="Patient", on_delete=models.CASCADE)
-    text_question = models.ForeignKey(to="TextQuestion", on_delete=models.CASCADE)
+    # text_question = models.ForeignKey(to="TextQuestion", on_delete=models.CASCADE)
     question = models.ForeignKey(to="Question", on_delete=models.CASCADE)
     option = models.ForeignKey(to="Option", on_delete=models.CASCADE)
 
@@ -102,7 +103,7 @@ class Patient(models.Model):
         choices=NationChoice.choices,
         default=NationChoice.RU,
     )
-    date_registration = models.DateField("Дата регистрации", auto_now_add=True)
+    date_registration = models.DateTimeField("Дата регистрации", auto_now_add=True)
 
     def __str__(self):
         return self.name

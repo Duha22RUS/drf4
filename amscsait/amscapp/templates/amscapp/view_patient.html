@@ -3,23 +3,30 @@
 
 {% block body %}
   <div class="container">
-    <div class="row">
-      <div class="col-md-12">
-        <h1>{{ title }}</h1>
-      </div>
+      <h1>Анкета пациента</h1>
+    <div>
+      <table class="table">
+        <tr>
+          <th>Пациент</th>
+          <th>Дата рождения</th>
+          <th>Дата регистрации</th>
+        </tr>
+        <tr>
+          <td>{{ patient }}</td>
+          <td>{{ patient.date_of_birth }}</td>
+          <td>{{ patient.date_registration }}</td>
+        </tr>
+      </table>
     </div>
-    <div class="row">{{ patient }}</div>
+    <h2>Анкетирование от: {{ patientanswer.date_of_the_survey }} {{ date }}</h2>
     <div class="row">
       {% if answers %}
         <table class="table">
-          <thead>
           <tr>
             <th>Вопрос</th>
             <th>Ответ</th>
             <th>Кол-во баллов</th>
           </tr>
-          </thead>
-          <tbody>
           {% for answer in answers %}
             <tr>
               <td>{{ answer.question }}</td>
@@ -27,7 +34,6 @@
               <td>{{ answer.option.score }}</td>
             </tr>
           {% endfor %}
-          </tbody>
         </table>
         <p>Итого: {{ total }}</p>
       {% endif %}

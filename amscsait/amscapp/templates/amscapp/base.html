@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
   <link rel="stylesheet" href="{% static 'css/styleamsc.css' %}">
   {% block extrahead %}{% endblock %}
-  <title>{{ title }}</title>
+  <title>Главная</title>
 </head>
 
 <body>
@@ -19,7 +19,7 @@
     {% if request.user.is_authenticated %}
       <inp>
         <a href="{% url 'index' %}">
-          <li><i class="fas fa-search"></i> Поиск пациентов</li>
+          <li><i class="fas fa-search"></i> Главная</li>
         </a>
         <a href="{% url 'create_patient' %}">
           <li><i class="fas fa-address-card"></i> Добавить пациента</li>

@@ -7,8 +7,8 @@ aside {
 }
 
 ul {
-    margin-left: 100px;
-    margin-right: 100px;
+    margin-left: 10%;
+    width: 80%;
     padding: 2em 0;
     background: #CD5C5C; // Цвет панели
 }
@@ -57,21 +57,18 @@ tr:nth-child(even) {
     float: right;
 }
 
-form {
-    margin-left: 100px;
-    margin-right: 100px;
-}
-
 .form-control {
     width: 500px;
     display: inline;
     float: right;
 }
 
-h1 {
-    margin-left: 100px;
-}
+
 
 .compl:nth-child(odd) {
     background-color: #87CEEB;/* фон нечетных строк */
+}
+
+.search {
+    width: 80%;
 }

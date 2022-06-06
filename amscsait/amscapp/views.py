@@ -1,7 +1,8 @@
+from datetime import date
 from django.http import HttpResponse
 from .forms import (AnswersForm, PatientForm, UserLoginForm,
                     UserRegisterForm)
-from .models import Patient
+from .models import Patient, PatientAnswer
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -36,6 +37,7 @@ def create_patient(request):
 
 def view_patient(request, pk):
     patient = get_object_or_404(Patient, pk=pk)
+    date = PatientAnswer.date_of_the_survey
     answers = patient.patientanswer_set.all()
     total_score = patient.patientanswer_set.all().aggregate(
         total_score=Sum("option__score")
@@ -43,7 +45,7 @@ def view_patient(request, pk):
     return render(
         request,
         "amscapp/view_patient.html",
-        {"patient": patient, "answers": answers, "total": total_score},
+        {"patient": patient, "date": date, "answers": answers, "total": total_score},
     )
 
 
