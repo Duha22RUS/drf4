@@ -43,7 +43,7 @@ class TextQuestion(models.Model):
 class PatientAnswer(models.Model):
     date_of_the_survey = models.DateTimeField("Дата роведения анкетирования", auto_now_add=True)
     patient = models.ForeignKey(to="Patient", on_delete=models.CASCADE)
-    # text_question = models.ForeignKey(to="TextQuestion", on_delete=models.CASCADE)
+    text_question = models.ForeignKey(to="TextQuestion", on_delete=models.CASCADE)
     question = models.ForeignKey(to="Question", on_delete=models.CASCADE)
     option = models.ForeignKey(to="Option", on_delete=models.CASCADE)
 

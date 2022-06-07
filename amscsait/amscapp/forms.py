@@ -40,6 +40,11 @@ class AnswersForm(forms.Form):
                 question.id, None
             )
 
+    def get_context_data(self, **kwargs):
+        context = super(AnswersForm, self).get_context_data(**kwargs)
+        context['textquestion'] = TextQuestion.objects.all()
+        return context
+
     def save(self):
         answers_to_create = []
         for field, value in self.cleaned_data.items():

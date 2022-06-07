@@ -2,7 +2,7 @@ from datetime import date
 from django.http import HttpResponse
 from .forms import (AnswersForm, PatientForm, UserLoginForm,
                     UserRegisterForm)
-from .models import Patient, PatientAnswer
+from .models import Patient, PatientAnswer, TextQuestion
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
