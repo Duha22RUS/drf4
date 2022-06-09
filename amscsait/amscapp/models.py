@@ -1,8 +1,15 @@
+from enum import Enum
 import django
 from django.db import models
 
 
+class QuestionType(Enum):
+    POLL = 'poll'
+    TEXT = 'text'
+
+
 class Question(models.Model):
+    type_ = QuestionType.POLL
     question_text = models.CharField("Текст вопроса", max_length=100)
 
     def __str__(self):
@@ -29,6 +36,7 @@ class Option(models.Model):
 
 
 class TextQuestion(models.Model):
+    type_ = QuestionType.TEXT
     question_text = models.CharField("Текст вопроса", max_length=100)
     answer = models.CharField("Ответ", max_length=100, blank=True)
 
@@ -43,9 +51,9 @@ class TextQuestion(models.Model):
 class PatientAnswer(models.Model):
     date_of_the_survey = models.DateTimeField("Дата роведения анкетирования", auto_now_add=True)
     patient = models.ForeignKey(to="Patient", on_delete=models.CASCADE)
-    text_question = models.ForeignKey(to="TextQuestion", on_delete=models.CASCADE)
     question = models.ForeignKey(to="Question", on_delete=models.CASCADE)
     option = models.ForeignKey(to="Option", on_delete=models.CASCADE)
+    text_question = models.ForeignKey(to="TextQuestion", on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = "Ответ анкеты"

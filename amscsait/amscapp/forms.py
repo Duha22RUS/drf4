@@ -24,7 +24,8 @@ class AnswersForm(forms.Form):
     def __init__(self, *args, instance: Patient, **kwargs):
         self.instance = instance
         super().__init__(*args, **kwargs)
-        questions = Question.objects.all()
+        questions = list(Question.objects.all())
+        text_questions = list(TextQuestion.objects.all())
         existing_answers = {
             question_id: option_id
             for question_id, option_id in PatientAnswer.objects.filter(
@@ -39,21 +40,26 @@ class AnswersForm(forms.Form):
             self.fields["question_%s" % question.id].initial = existing_answers.get(
                 question.id, None
             )
-
-    def get_context_data(self, **kwargs):
-        context = super(AnswersForm, self).get_context_data(**kwargs)
-        context['textquestion'] = TextQuestion.objects.all()
-        return context
+        for quest in text_questions:
+            self.fields["quest_%s" % quest.id] = forms.CharField(
+                label=quest.question_text,
+            )
+        # for question in sorted(*questions, **text_questions):
+        #     self.fields[f'{question.id}-{question.type_.value}-{text_questions.id}-{text_questions.answer}'] = sorted(
+        #         question.id, question.type_.value, text_questions.id
+        #     )
 
     def save(self):
         answers_to_create = []
         for field, value in self.cleaned_data.items():
             question_id = field.split("_")[-1]
+            text_question_id = field.split("_")[-1]
             answers_to_create.append(
                 PatientAnswer(
                     patient=self.instance,
                     question_id=question_id,
                     option_id=value,
+                    text_question_id=text_question_id,
                 )
             )
         PatientAnswer.objects.filter(patient=self.instance).delete()
