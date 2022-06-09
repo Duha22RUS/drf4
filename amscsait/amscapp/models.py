@@ -37,15 +37,26 @@ class Option(models.Model):
 
 class TextQuestion(models.Model):
     type_ = QuestionType.TEXT
-    question_text = models.CharField("Текст вопроса", max_length=100)
-    answer = models.CharField("Ответ", max_length=100, blank=True)
+    text_question = models.CharField("Текст вопроса", max_length=100)
 
     def __str__(self):
-        return self.question_text
+        return self.text_question
 
     class Meta:
         verbose_name = "Текстовый вопрос"
         verbose_name_plural = "Текстовые вопросы"
+
+
+class TextPatientAnswer(models.Model):
+    answer = models.CharField("Ответ", max_length=100, blank=True)
+    text_question = models.ForeignKey(to="TextQuestion", on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.answer
+
+    class Meta:
+        verbose_name = "Ответ на текстовый вопрос"
+        verbose_name_plural = "Ответы на текстовые вопросы"
 
 
 class PatientAnswer(models.Model):
@@ -54,10 +65,11 @@ class PatientAnswer(models.Model):
     question = models.ForeignKey(to="Question", on_delete=models.CASCADE)
     option = models.ForeignKey(to="Option", on_delete=models.CASCADE)
     text_question = models.ForeignKey(to="TextQuestion", on_delete=models.CASCADE)
+    text_patient_answer = models.ForeignKey(to="TextPatientAnswer", on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = "Ответ анкеты"
-        verbose_name_plural = "Ответ анкеты"
+        verbose_name_plural = "Ответы анкеты"
 
 
 class Patient(models.Model):

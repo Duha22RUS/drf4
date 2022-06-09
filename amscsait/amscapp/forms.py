@@ -1,6 +1,6 @@
 from datetime import date
 
-from .models import Patient, PatientAnswer, Question, TextQuestion
+from .models import Patient, PatientAnswer, Question, TextQuestion, TextPatientAnswer
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
@@ -26,6 +26,7 @@ class AnswersForm(forms.Form):
         super().__init__(*args, **kwargs)
         questions = list(Question.objects.all())
         text_questions = list(TextQuestion.objects.all())
+        text_patient_answer = list(TextPatientAnswer.objects.all())
         existing_answers = {
             question_id: option_id
             for question_id, option_id in PatientAnswer.objects.filter(
@@ -42,7 +43,7 @@ class AnswersForm(forms.Form):
             )
         for quest in text_questions:
             self.fields["quest_%s" % quest.id] = forms.CharField(
-                label=quest.question_text,
+                label=quest.text_question,
             )
         # for question in sorted(*questions, **text_questions):
         #     self.fields[f'{question.id}-{question.type_.value}-{text_questions.id}-{text_questions.answer}'] = sorted(
@@ -60,6 +61,7 @@ class AnswersForm(forms.Form):
                     question_id=question_id,
                     option_id=value,
                     text_question_id=text_question_id,
+                    text_patient_answer=value
                 )
             )
         PatientAnswer.objects.filter(patient=self.instance).delete()
