@@ -2,6 +2,7 @@
 
 {% block title %}Главная{% endblock %}
 {% block body %}
+{% if request.user.is_authenticated %}
   <div class="container">
     <div class="search-bar">
       <form action="{% url 'search' %}" method="get">
@@ -21,7 +22,7 @@
                 {{ patient.name }}
               </td>
               <td>
-                <a class="btn btn-link" href="{% url 'view_patient' pk=patient.pk %}">Просмотр</a>
+                <a class="btn btn-default" href="{% url 'view_patient' pk=patient.pk %}">Просмотр</a>
               </td>
             </tr>
           {% endfor %}
@@ -29,4 +30,5 @@
       </div>
     </div>
   </div>
+{% endif %}
 {% endblock %}
