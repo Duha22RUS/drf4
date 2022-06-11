@@ -1,0 +1,22 @@
+{% extends 'amscapp/base.html' %}
+
+{% block title %}Результаты поиска{% endblock %}
+
+{% block body %}
+
+    <h1>Результаты поиска</h1>
+<table>
+  {% for Patient in object_list %}
+    <tr>
+        <tr>
+          <td>
+            {{ Patient.name }}
+            <a class="btn btn-default" href="{% url 'make_answers' pk=Patient.pk %}">{% if not answers %}Анкетировать{% else %}
+                Изменить ответы{% endif %}</a>
+            <a class="btn btn-warn" href="{% url 'edit_patient' pk=Patient.pk %}">Редактировать пациента</a>
+          </td>
+        </tr>
+    </tr>
+  {% endfor %}
+</table>
+{% endblock %}

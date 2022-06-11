@@ -1,0 +1,17 @@
+{% extends 'amscapp/base.html' %}
+
+{% block extrahead %}{{ form.media }}{% endblock %}
+
+{% block body %}
+  <div class="container">
+    <div class="row">
+      <h1>{{ title }}</h1>
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h1>Учет факторов тромбогенного риска</h1>
+        {{ form.as_p }}
+        <input class="btn btn-primary btn-block" type="submit" value="{{ submit_text|default:'Показать результаты' }}">
+      </form>
+    </div>
+  </div>
+{% endblock %}

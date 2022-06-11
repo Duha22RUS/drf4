@@ -1,64 +1,84 @@
-import datetime
-
-import self as self
-from django.contrib import admin
-from .models import Patient, Question, Complaint
-from django.forms import ModelForm, ModelChoiceField
+from .models import Patient, PatientAnswer, Question, TextQuestion
 from django import forms
-from django.contrib.admin.widgets import AdminDateWidget
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
-from .models import Option
-from django.db import models
 
 
-def i18n_javascript(request):
-    return admin.site.i18n_javascript(request)
-
-
-class PatientForm(ModelForm):
-    date_of_birth = forms.DateField(label='Дата рождения', widget=AdminDateWidget())
-
+class PatientForm(forms.ModelForm):
     class Meta:
         model = Patient
-        fields = ('__all__')
+        fields = "__all__"
+        widgets = {
+            "date_of_birth": forms.DateInput(attrs={"class": "datepicker"}),
+        }
 
 
-class OptionForm(ModelForm):
-    series = ModelChoiceField(label='Ответ', queryset=Option.objects.all())
-    pat = ModelChoiceField(label='Пациент', queryset=Patient.objects.order_by('name'))
-    score = Option.objects.order_by('score')
-
-    def __init__(self, *args, **kwargs):
+class AnswersForm(forms.Form):
+    def __init__(self, *args, instance: Patient, **kwargs):
+        self.instance = instance
         super().__init__(*args, **kwargs)
-        self.fields['option'].queryset = Option.objects.none()
+        text_question = TextQuestion.objects.all()
+        questions = Question.objects.all()
+        existing_answers = {
+            question_id: option_id
+            for question_id, option_id in PatientAnswer.objects.filter(
+                patient=self.instance
+            ).values_list("question_id", "option_id")
+        }
+        for question in questions:
+            self.fields["question_%s" % question.id] = forms.ChoiceField(
+                label=question.question_text,
+                choices=question.options.all().values_list("id", "name"),
+            )
+            self.fields["question_%s" % question.id].initial = existing_answers.get(
+                question.id, None
+            )
+        for el in text_question:
+            self.fields = el.question_text
+            self.fields = el.answer
 
-    # if 'field' in self.data:
-    #     try:
-    #         field_id = int(self.data.get('field'))
-    #         self.fields['option'].queryset = Option.objects.filter(field_id=field_id).order_by('field')
-    #     except (ValueError, TypeError):
-    #         pass  # invalid input from the client; ignore and fallback to empty City queryset
-    # elif self.instance.pk:
-    #     self.fields['option'].queryset = self.instance.field.option_set.order_by('field')
-
-    class Meta:
-        model = Complaint
-        fields = ('__all__')
+    def save(self):
+        answers_to_create = []
+        for field, value in self.cleaned_data.items():
+            question_id = field.split("_")[-1]
+            answers_to_create.append(
+                PatientAnswer(
+                    patient=self.instance,
+                    question_id=question_id,
+                    option_id=value,
+                )
+            )
+        PatientAnswer.objects.filter(patient=self.instance).delete()
+        PatientAnswer.objects.bulk_create(answers_to_create)
 
 
 class UserLoginForm(AuthenticationForm):
-    username = forms.CharField(label='Имя пользователя:', widget=forms.TextInput(attrs={'class': 'form-control'}))
-    password = forms.CharField(label='Пароль:', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    username = forms.CharField(
+        label="Имя пользователя",
+        widget=forms.TextInput(attrs={"class": "form-control"}),
+    )
+    password = forms.CharField(
+        label="Пароль", widget=forms.PasswordInput(attrs={"class": "form-control"})
+    )
 
 
 class UserRegisterForm(UserCreationForm):
-    username = forms.CharField(label='Имя пользователя:', widget=forms.TextInput(attrs={'class': 'form-control'}))
-    email = forms.EmailField(label='Электронная почта:', widget=forms.EmailInput(attrs={'class': 'form-control'}))
-    password1 = forms.CharField(label='Пароль:', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
-    password2 = forms.CharField(label='Подтверждение пароля:',
-                                widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    username = forms.CharField(
+        label="Имя пользователя",
+        widget=forms.TextInput(attrs={"class": "form-control"}),
+    )
+    email = forms.EmailField(
+        label="Электронная почта",
+        widget=forms.EmailInput(attrs={"class": "form-control"}),
+    )
+    password1 = forms.CharField(
+        label="Пароль", widget=forms.PasswordInput(attrs={"class": "form-control"})
+    )
+    password2 = forms.CharField(
+        label="Подтверждение пароля",
+        widget=forms.PasswordInput(attrs={"class": "form-control"}),
+    )
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password1', 'password2')
+        fields = ("username", "email", "password1", "password2")
