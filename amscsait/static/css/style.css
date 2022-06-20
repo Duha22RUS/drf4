@@ -2,42 +2,42 @@ body {
     background: white;
 }
 
+.alert {
+    margin-left: 20%;
+    margin-right: 20%;
+}
+
 aside {
     color: #FFFFFF;
 }
 
 ul {
-    margin-left: 100px;
-    margin-right: 100px;
-
-    background: #AAAAAA; //Цвет панели
+    width: 100%;
+    padding: 2em 0;
+    background: #CD5C5C; // Цвет панели
+    font-size: 2vw;
+    white-space: nowrap;
 }
 
-a {
+.nav-link {
     font-family: system-ui;
     text-decoration: none;
-
     color: #FFFFFF;
+    text-align: center;
 }
 
-a:hover {
+.nav-link:hover {
     text-decoration: none;
     background: #B22222;
     color: #FFFFFF;
 }
 
-exit {
-    float: right;
-}
-
-li {
-    display: inline;
-}
-
-table {
-    border-collapse: collapse;
-    margin: 0px auto;
-    width: 90%;
+.table {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+    font-size: 20px;
+    border-radius: 10px;
+    border-spacing: 0;
+    text-align: center;
 }
 
 th, td {
@@ -45,34 +45,10 @@ th, td {
     padding: 5px;
 }
 
-tr:nth-child(odd) {
-    background-color: #FFFACD;/* фон нечетных строк */
+.search {
+    width: 80%;
 }
 
-tr:nth-child(even) {
-    background-color: #FFF0F5;/* фон нечетных строк */
-}
-
-.buttonel {
-    float: right;
-}
-
-.add {
-    margin-left: 100px;
-}
-
-form {
-    margin-left: 100px;
-    margin-right: 100px;
-    float: left;
-}
-
-.form-control {
-    width: 500px;
-    display: inline;
-    float: right;
-}
-
-h1 {
-    margin-left: 100px;
+h1, h2 {
+    text-align: center;
 }

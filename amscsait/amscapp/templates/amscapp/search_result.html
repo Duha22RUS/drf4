@@ -3,20 +3,29 @@
 {% block title %}Результаты поиска{% endblock %}
 
 {% block body %}
-
-    <h1>Результаты поиска</h1>
-<table>
-  {% for Patient in object_list %}
-    <tr>
-        <tr>
-          <td>
-            {{ Patient.name }}
-            <a class="btn btn-default" href="{% url 'make_answers' pk=Patient.pk %}">{% if not answers %}Анкетировать{% else %}
-                Изменить ответы{% endif %}</a>
-            <a class="btn btn-warn" href="{% url 'edit_patient' pk=Patient.pk %}">Редактировать пациента</a>
-          </td>
-        </tr>
-    </tr>
-  {% endfor %}
-</table>
+{% if request.user.is_authenticated %}
+<div class="container">
+  <h1>Результаты поиска</h1>
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table">
+        {% for Patient in object_list %}
+          <tr>
+                <td>
+                  {{ Patient.name }}
+                </td>
+                <td>
+                  <a class="btn btn-default" href="{% url 'make_answers' pk=Patient.pk %}">{% if not answers %}Анкетировать{% else %}
+                      Изменить ответы{% endif %}</a>
+                </td>
+                <td>
+                  <a class="btn btn-warn" href="{% url 'edit_patient' pk=Patient.pk %}">Редактировать пациента</a>
+                </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+</div>
+{% endif %}
 {% endblock %}

@@ -2,6 +2,7 @@
 
 
 {% block body %}
+  {% if request.user.is_authenticated %}
   <div class="container">
       <h1>Анкета пациента</h1>
     <div>
@@ -18,7 +19,65 @@
         </tr>
       </table>
     </div>
-    <h2>Анкетирование от: {{ patientanswer.date_of_the_survey }} {{ date }}</h2>
+
+    <div class="row">
+      <button class="btn btn-default" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+        Полная анкета пациента
+      </button>
+        <div class="collapse" id="collapseExample">
+          <div class="card card-body">
+            <div>
+              <table class="table">
+                <tr>
+                  <th>Пол</th>
+                  <th>Страховая организация</th>
+                  <th>Страховое свидетельство</th>
+                </tr>
+                <tr>
+                  <td>{{ patient.gender }}</td>
+                  <td>{{ patient.insurance }}</td>
+                  <td>{{ patient.policy }}</td>
+                </tr>
+                <tr>
+                  <th>Домашний адрес</th>
+                  <th>Номер телефона</th>
+                  <th>Электронная почта</th>
+                </tr>
+                <tr>
+                  <td>{{ patient.address }}</td>
+                  <td>{{ patient.phone_number }}</td>
+                  <td>{{ patient.email }}</td>
+                </tr>
+                <tr>
+                  <th>ФИО родителя</th>
+                  <th>Номер телефона родителя</th>
+                  <th>Электронная почта родителя</th>
+                </tr>
+                <tr>
+                  <td>{{ patient.parent_name }}</td>
+                  <td>{{ patient.parent_phone_number }}</td>
+                  <td>{{ patient.parent_email }}</td>
+                </tr>
+                <tr>
+                  <th>Национальность</th>
+                  <th>Национальность матери</th>
+                  <th>Национальность отца</th>
+                </tr>
+                <tr>
+                  <td>{{ patient.nation }}</td>
+                  <td>{{ patient.mother_nation }}</td>
+                  <td>{{ patient.father_nation }}</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      <a class="btn btn-warn" href="{% url 'edit_patient' pk=patient.pk %}">Редактировать пациента</a>
+      <a class="btn btn-default" href="{% url 'make_answers' pk=patient.pk %}">{% if not answers %}Анкетировать{% else %}
+        Изменить ответы{% endif %}</a>
+    </div>
+
+    <h2>Анкетирование от: {{ patientanswer.date_of_the_survey }} {{ datesurv }} проведено: {{ user }}</h2>
     <div class="row">
       {% if answers %}
         <table class="table">
@@ -34,15 +93,14 @@
               <td>{{ answer.option.score }}</td>
             </tr>
           {% endfor %}
+          <tr>
+            <th></th>
+            <th>Итого:</th>
+            <th>{{ total }}</th>
+          </tr>
         </table>
-        <p>Итого: {{ total }}</p>
       {% endif %}
     </div>
-    <div class="row">
-      <a class="btn btn-default" href="{% url 'make_answers' pk=patient.pk %}">{% if not answers %}Анкетировать{% else %}
-        Изменить ответы{% endif %}</a>
-    </div>
-    <div class="row"><a class="btn btn-warn" href="{% url 'edit_patient' pk=patient.pk %}">Редактировать пациента</a>
-    </div>
   </div>
+  {% endif %}
 {% endblock %}

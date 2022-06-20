@@ -31,13 +31,13 @@ def create_patient(request):
     return render(
         request,
         "amscapp/post_form.html",
-        {"form": form, "title": "Добавление пациента"},
+        {"form": form},
     )
 
 
 def view_patient(request, pk):
     patient = get_object_or_404(Patient, pk=pk)
-    date = PatientAnswer.date_of_the_survey
+    datesurv = PatientAnswer.date_of_the_survey
     answers = patient.patientanswer_set.all()
     total_score = patient.patientanswer_set.all().aggregate(
         total_score=Sum("option__score")
@@ -45,7 +45,7 @@ def view_patient(request, pk):
     return render(
         request,
         "amscapp/view_patient.html",
-        {"patient": patient, "date": date, "answers": answers, "total": total_score},
+        {"patient": patient, "datesurv": datesurv, "answers": answers, "total": total_score},
     )
 
 
@@ -57,7 +57,7 @@ def edit_patient(request, pk):
         messages.success(request, "Пациент изменен")
         return redirect("view_patient", pk=form.instance.pk)
     return render(
-        request, "amscapp/post_form.html", {"form": form, "title": "Изменение пациента"}
+        request, "amscapp/post_form.html", {"form": form}
     )
 
 
@@ -80,7 +80,7 @@ def register(request):
         messages.success(request, "Регистрация прошла успешно!")
         return redirect("index")
     return render(
-        request, "amscapp/post_form.html", {"form": form, "title": "Регистрация"}
+        request, "amscapp/post_form.html", {"form": form}
     )
 
 
@@ -92,7 +92,7 @@ def user_login(request):
         login(request, user)
         messages.success(request, "Вы успешно вошли!")
         return redirect("index")
-    return render(request, "amscapp/post_form.html", {"form": form, "title": "Вход"})
+    return render(request, "amscapp/post_form.html", {"form": form})
 
 
 @login_required
