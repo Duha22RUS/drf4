@@ -9,17 +9,17 @@
   <div class="row">
     <div class="col-md-12">
       <table class="table">
-        {% for Patient in object_list %}
+        {% for patient in object_list %}
           <tr>
+                <th>
+                  <a class="btn" href="{% url 'view_patient' pk=patient.pk %}">{{ patient.name }}</a>
+                </th>
                 <td>
-                  {{ Patient.name }}
-                </td>
-                <td>
-                  <a class="btn btn-default" href="{% url 'make_answers' pk=Patient.pk %}">{% if not answers %}Анкетировать{% else %}
+                  <a class="btn btn-default" href="{% url 'make_answers' pk=patient.pk %}">{% if not answers %}Анкетировать{% else %}
                       Изменить ответы{% endif %}</a>
                 </td>
                 <td>
-                  <a class="btn btn-warn" href="{% url 'edit_patient' pk=Patient.pk %}">Редактировать пациента</a>
+                  <a class="btn btn-warn" href="{% url 'edit_patient' pk=patient.pk %}">Редактировать пациента</a>
                 </td>
           </tr>
         {% endfor %}

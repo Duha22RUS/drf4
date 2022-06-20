@@ -1,6 +1,6 @@
 {% load static %}
 <!doctype html>
-<html lang="ru" xmlns="http://www.w3.org/1999/html">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport"
@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   {% block extrahead %}{% endblock %}
-  <title>Главная</title>
+  <title>{{title}}</title>
 </head>
 
 <body>
@@ -18,61 +18,48 @@
     <div class="container">
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
         aria-controls="navbarContent" aria-expanded="false">
-        <span class="navbar-toggler-icon"></span>
+        <a class="logo">
+        <img src="{% static 'image/logo.png' %}" alt="Logo" width="50" height="50">
+        </a>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarContent">
       <ul class="navbar-nav ms-auto mb-lg-0">
         {% if request.user.is_authenticated %}
-
-              <li class="nav-item">
-                <a href="{% url 'index' %}" class="nav-link">
-                <i class="fas fa-search"></i> Главная
-                </a>
-              </li>
-
-              <li class="nav-item">
-                <a href="{% url 'create_patient' %}" class="nav-link">
-                <i class="fas fa-address-card"></i> Добавить пациента
-                </a>
-              </li>
-
-              <li class="nav-item">
-                <a class="nav-link">
-                <i class="fas fa-file-import"></i> Импорт данных
-                </a>
-              </li>
-
-              <li class="nav-item">
-                <a class="nav-link">
-                <i class="fas fa-file-export"></i> Экспорт данных
-                </a>
-              </li>
+          <li class="nav-item">
+            <a href="{% url 'index' %}" class="nav-link">
+            <i class="fas fa-search"></i> Главная
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'create_patient' %}" class="nav-link">
+            <i class="fas fa-address-card"></i> Добавить пациента
+            </a>
+          </li>
         </ul>
 
         <ul class="navbar-nav justify-content-end">
-              <li class="nav-item"> <a class="nav-link">{{ user.username }}</a> </li>
-
-              <li class="nav-item">
-                <a href="{% url 'exit' %}" class="nav-link">
-                <i class="fas fa-sign-out-alt"></i> Выход
-                </a>
-              </li>
+          <li class="nav-item">
+            <a href="{% url 'admin' %}" class="nav-link">{{ user.username }}</a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'exit' %}" class="nav-link">
+            <i class="fas fa-sign-out-alt"></i> Выход
+            </a>
+          </li>
         </ul>
-
         {% else %}
+          <li class="nav-item">
+            <a href="{% url 'register' %}" class="nav-link">
+            <i class="fas fa-user-plus"></i> Регистрация
+            </a>
+          </li>
 
-            <li class="nav-item">
-              <a href="{% url 'register' %}" class="nav-link">
-              <i class="fas fa-user-plus"></i> Регистрация
-              </a>
-            </li>
-
-            <li class="nav-item">
-              <a href="{% url 'login' %}" class="nav-link">
-              <i class="fas fa-sign-in-alt"></i> Авторизация
-              </a>
-            </li>
+          <li class="nav-item">
+            <a href="{% url 'login' %}" class="nav-link">
+            <i class="fas fa-sign-in-alt"></i> Авторизация
+            </a>
+          </li>
         {% endif %}
     </div>
     </div>

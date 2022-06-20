@@ -1,27 +1,28 @@
-from datetime import date
-from django.http import HttpResponse
 from .forms import (AnswersForm, PatientForm, UserLoginForm,
                     UserRegisterForm)
 from .models import Patient, PatientAnswer, TextQuestion
 from django.contrib import messages
 from django.contrib.auth import login, logout
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
 from django.db.models import Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.generic import ListView
-
-
-def sample_view(request):
-    html = '<body><h1>Django sample_view</h1><br><p>Отладка sample_view</p></body>'
-    return HttpResponse(html)
 
 
 def index(request):
-    patients = Patient.objects.order_by("name")
-    return render(request, "amscapp/index.html", {"patients": patients})
+    query = request.GET.get('q')
+    if query:
+        patients = Patient.objects.filter(Q(name__icontains=query)
+                                          | Q(date_of_birth__icontains=query)
+                                          | Q(address__icontains=query)
+                                          | Q(policy__icontains=query)
+                                          | Q(phone_number__icontains=query))
+    else:
+        patients = Patient.objects.order_by("name")
+    return render(request, "amscapp/index.html", {"patients": patients, "title": "Главная"})
 
 
 @login_required
+@permission_required('amscapp.add_patient', raise_exception=True)
 def create_patient(request):
     form = PatientForm(request.POST or None)
     if form.is_valid():
@@ -31,24 +32,30 @@ def create_patient(request):
     return render(
         request,
         "amscapp/post_form.html",
-        {"form": form},
+        {"form": form, "title": "Добавление пациента", "submit_text": "Добавить пациента"},
     )
 
 
+@permission_required('amscapp.view_patient', raise_exception=True)
 def view_patient(request, pk):
     patient = get_object_or_404(Patient, pk=pk)
-    datesurv = PatientAnswer.date_of_the_survey
     answers = patient.patientanswer_set.all()
+    textanswers = patient.patienttextanswer_set.all()
     total_score = patient.patientanswer_set.all().aggregate(
         total_score=Sum("option__score")
     )["total_score"]
+    if patient.gender == patient.GenderChoice.MAN:
+        total_score = patient.patientanswer_set.all().aggregate(
+            total_score=Sum("option__score") + 1)["total_score"]
     return render(
         request,
         "amscapp/view_patient.html",
-        {"patient": patient, "datesurv": datesurv, "answers": answers, "total": total_score},
+        {"patient": patient, "answers": answers, "textanswers": textanswers,
+         "total": total_score, "title": "Анкета пациента"},
     )
 
 
+@permission_required('amscapp.change_patient', raise_exception=True)
 def edit_patient(request, pk):
     patient = get_object_or_404(Patient, pk=pk)
     form = PatientForm(request.POST or None, instance=patient)
@@ -57,10 +64,12 @@ def edit_patient(request, pk):
         messages.success(request, "Пациент изменен")
         return redirect("view_patient", pk=form.instance.pk)
     return render(
-        request, "amscapp/post_form.html", {"form": form}
+        request, "amscapp/post_form.html",
+        {"form": form, "title": "Изменение пациента", "submit_text": "Применить изменения"}
     )
 
 
+@permission_required('amscapp.change_patientanswer', raise_exception=True)
 def make_answers(request, pk):
     patient = get_object_or_404(Patient, pk=pk)
     form = AnswersForm(request.POST or None, instance=patient)
@@ -68,7 +77,10 @@ def make_answers(request, pk):
         form.save()
         messages.success(request, "Ответы сохранены")
         return redirect("view_patient", pk=form.instance.pk)
-    return render(request, "amscapp/post_form.html", {"form": form})
+    return render(
+        request, "amscapp/post_form.html",
+        {"form": form, "title": "Анкетирование", "submit_text": "Сохранить результаты"}
+    )
 
 
 @user_passes_test(lambda u: not u.is_authenticated)
@@ -80,7 +92,7 @@ def register(request):
         messages.success(request, "Регистрация прошла успешно!")
         return redirect("index")
     return render(
-        request, "amscapp/post_form.html", {"form": form}
+        request, "amscapp/post_form.html", {"form": form, "title": "Регистрация", "submit_text": "Регистрация"}
     )
 
 
@@ -92,7 +104,7 @@ def user_login(request):
         login(request, user)
         messages.success(request, "Вы успешно вошли!")
         return redirect("index")
-    return render(request, "amscapp/post_form.html", {"form": form})
+    return render(request, "amscapp/post_form.html", {"form": form, "title": "Авторизация", "submit_text": "Вход"})
 
 
 @login_required
@@ -101,11 +113,5 @@ def exit(request):
     return redirect("login")
 
 
-class SearchResultsView(ListView):
-    model = Patient
-    template_name = 'amscapp/search_result.html'
-
-    def get_queryset(self):
-        query = self.request.GET.get('q')
-        object_list = Patient.objects.filter(Q(name__icontains=query))
-        return object_list
+def admin(request):
+    return render(request, 'admin/')
