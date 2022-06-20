@@ -1,10 +1,17 @@
-from .models import Patient, PatientAnswer, Question, TextQuestion
+from datetime import date
+
+from .models import Patient, PatientAnswer, Question, TextQuestion, TextPatientAnswer
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
 
 
 class PatientForm(forms.ModelForm):
+
+    def calculate_age(born):
+        today = date.today()
+        return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+
     class Meta:
         model = Patient
         fields = "__all__"
@@ -17,8 +24,9 @@ class AnswersForm(forms.Form):
     def __init__(self, *args, instance: Patient, **kwargs):
         self.instance = instance
         super().__init__(*args, **kwargs)
-        text_question = TextQuestion.objects.all()
-        questions = Question.objects.all()
+        questions = list(Question.objects.all())
+        text_questions = list(TextQuestion.objects.all())
+        text_patient_answer = list(TextPatientAnswer.objects.all())
         existing_answers = {
             question_id: option_id
             for question_id, option_id in PatientAnswer.objects.filter(
@@ -33,19 +41,27 @@ class AnswersForm(forms.Form):
             self.fields["question_%s" % question.id].initial = existing_answers.get(
                 question.id, None
             )
-        for el in text_question:
-            self.fields = el.question_text
-            self.fields = el.answer
+        for quest in text_questions:
+            self.fields["quest_%s" % quest.id] = forms.CharField(
+                label=quest.text_question,
+            )
+        # for question in sorted(*questions, **text_questions):
+        #     self.fields[f'{question.id}-{question.type_.value}-{text_questions.id}-{text_questions.answer}'] = sorted(
+        #         question.id, question.type_.value, text_questions.id
+        #     )
 
     def save(self):
         answers_to_create = []
         for field, value in self.cleaned_data.items():
             question_id = field.split("_")[-1]
+            text_question_id = field.split("_")[-1]
             answers_to_create.append(
                 PatientAnswer(
                     patient=self.instance,
                     question_id=question_id,
                     option_id=value,
+                    text_question_id=text_question_id,
+                    text_patient_answer=value
                 )
             )
         PatientAnswer.objects.filter(patient=self.instance).delete()
