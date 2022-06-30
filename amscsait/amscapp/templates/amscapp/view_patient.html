@@ -14,7 +14,7 @@
         </tr>
         <tr>
           <td>{{ patient }}</td>
-          <td>{{ patient.date_of_birth }}</td>
+          <td> {{ patient.date_of_birth }} <br> Возраст: {{ patient.calculate_age }} </br></td>
           <td>{{ patient.date_registration }}</td>
         </tr>
       </table>
@@ -77,9 +77,9 @@
         Изменить ответы{% endif %}</a>
     </div>
 
-    <h2>Анкетирование от: {{ patientanswer.date_of_the_survey }} {{ datesurv }} проведено: {{ user }}</h2>
     <div class="row">
       {% if answers %}
+          <h2>Анкетирование от: {{ date }} проведено: {{ doctor }}</h2>
         <table class="table">
           <tr>
             <th>Вопрос</th>
@@ -90,11 +90,26 @@
             <tr>
               <td>{{ answer.question }}</td>
               <td>{{ answer.option }}</td>
+              {% if answer.option.score == 0 %}
+              <td></td>
+              {% else %}
               <td>{{ answer.option.score }}</td>
+              {% endif %}
             </tr>
           {% endfor %}
+          {% for tanswer in textanswers %}
+            <tr>
+              <td>{{ tanswer.question }}</td>
+              <td>{{ tanswer.answer }}</td>
+              <td></td>
+            </tr>
+          {% endfor%}
           <tr>
-            <th></th>
+            {% if patient.gender == patient.GenderChoice.MAN %}
+            <th>Пол: {{ patient.gender }} (+1 балл)</th>
+            {% else %}
+            <th>Пол: {{ patient.gender }} (+0 баллов)</th>
+            {% endif %}
             <th>Итого:</th>
             <th>{{ total }}</th>
           </tr>

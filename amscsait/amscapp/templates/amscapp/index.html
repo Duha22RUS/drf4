@@ -2,27 +2,30 @@
 
 {% block title %}Главная{% endblock %}
 {% block body %}
-{% if request.user.is_authenticated %}
   <div class="container">
-    <div class="search-bar">
-      <form action="{% url 'search' %}" method="get">
-          <p>Поиск пациента:
-              <input class="search" type="text" name="q" placeholder="Введите">
-          <button type="submit">
-              <span class="fa fa-search" aria-hidden="true"></span>
-          </button></p>
-      </form>
+    <div class="search">
+    <form class="form-inline my-2 my-lg-0" action="{% url 'index' %}" method="get">
+      <input class="mr-sm-2" type="search" placeholder="Поиск" aria-label="Search" name="q">
+      <button class="fa fa-search" data-bs-toggle="collapse" type="submit">   Поиск</button>
+    </form>
     </div>
     <div class="row">
       <div class="col-md-12">
+      <br>
         <table class="table">
+          <th>
+            Пациент
+          </th>
+          <th>
+            Дата регистрации
+          </th>
           {% for patient in patients %}
             <tr>
               <td>
-                {{ patient.name }}
+                <a class="btn btn-default" href="{% url 'view_patient' pk=patient.pk %}">{{ patient.name }}</a>
               </td>
               <td>
-                <a class="btn btn-default" href="{% url 'view_patient' pk=patient.pk %}">Просмотр</a>
+                {{ patient.date_registration }}
               </td>
             </tr>
           {% endfor %}
@@ -30,5 +33,4 @@
       </div>
     </div>
   </div>
-{% endif %}
 {% endblock %}

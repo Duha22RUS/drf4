@@ -3,16 +3,16 @@
 {% block extrahead %}{{ form.media }}{% endblock %}
 
 {% block body %}
-
-  <div class="container">
-    <div class="row">
-      <h1>{{ title }}</h1>
+<div class="container">
+  <div class="row">
+    <h1>{{ title }}</h1>
+    <table class="table">
       <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
+          {{ form.as_p }}
         <input class="btn btn-primary btn-block" type="submit" value="{{ submit_text|default:'submit' }}">
       </form>
-    </div>
+    </table>
   </div>
-
+</div>
 {% endblock %}
