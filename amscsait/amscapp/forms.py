@@ -1,7 +1,9 @@
+from django.contrib import auth
+
 from .models import Patient, PatientAnswer, Question, TextQuestion, PatientTextAnswer
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 
 
 class PatientForm(forms.ModelForm):
@@ -25,28 +27,24 @@ class AnswersForm(forms.Form):
                 patient=self.instance
             ).values_list("question_id", "option_id")
         }
-        for question in questions:
-            self.fields["question_%s" % question.id] = forms.ChoiceField(
-                label=question.question_text,
-                choices=question.options.all().values_list("id", "name"),
-            )
-            self.fields["question_%s" % question.id].initial = existing_answers.get(
-                question.id, None
-            )
-        for quest in questions_text:
-            self.fields["quest_%s" % quest.id] = forms.CharField(
-                label=quest.question_text,
-            )
-        # for question in sorted([*questions, questions_text]):
-        #     self.fields[f'{question.id}-{question.type_.value}'] = sorted(question,
-        #                                                                   key=lambda x: x[question.question_number])
+        for question in sorted([*questions, *questions_text], key=lambda x: [x.question_number]):
+            if question.type_ == question.type_.TEXT:
+                self.fields[f'{question.type_.value}-{"%s" % question.id}'] = forms.CharField(
+                    label=question.question_text
+                )
+            elif question.type_ == question.type_.POLL:
+                self.fields[f'{question.type_.value}-{"%s" % question.id}'] = forms.ChoiceField(
+                    label=question.question_text,
+                    choices=question.options.all().values_list("id", "name"),
+                )
+                self.fields[f'{question.type_.value}-{"%s" % question.id}'].initial = existing_answers.get(question.id, None)
 
     def save(self):
         answers_to_create = []
         text_answers_to_create = []
         for field, value in self.cleaned_data.items():
-            if field.startswith('question_'):
-                question_id = field.split("_")[-1]
+            if field.startswith('poll-'):
+                question_id = field.split("-")[-1]
                 answers_to_create.append(
                     PatientAnswer(
                         patient=self.instance,
@@ -54,8 +52,8 @@ class AnswersForm(forms.Form):
                         option_id=value,
                     )
                 )
-            elif field.startswith('quest_'):
-                question_id = field.split("_")[-1]
+            elif field.startswith('text-'):
+                question_id = field.split("-")[-1]
                 text_answers_to_create.append(
                     PatientTextAnswer(
                         patient=self.instance,
@@ -99,3 +97,16 @@ class UserRegisterForm(UserCreationForm):
     class Meta:
         model = User
         fields = ("username", "email", "password1", "password2")
+
+# for question in questions:
+        #     self.fields["question_%s" % question.id] = forms.ChoiceField(
+        #         label=question.question_text,
+        #         choices=question.options.all().values_list("id", "name"),
+        #     )
+        #     self.fields["question_%s" % question.id].initial = existing_answers.get(
+        #         question.id, None
+        #     )
+        # for quest in questions_text:
+        #     self.fields["quest_%s" % quest.id] = forms.CharField(
+        #         label=quest.question_text,
+        #     )

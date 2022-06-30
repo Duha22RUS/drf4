@@ -1,6 +1,8 @@
+from django.contrib.auth.models import User
+
 from .forms import (AnswersForm, PatientForm, UserLoginForm,
                     UserRegisterForm)
-from .models import Patient, PatientAnswer, TextQuestion
+from .models import Patient, PatientAnswer, TextQuestion, PatientTextAnswer
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test, permission_required

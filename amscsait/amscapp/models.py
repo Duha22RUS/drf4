@@ -2,7 +2,7 @@ from datetime import date
 from enum import Enum
 import django
 from django.contrib import auth
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 from django.db import models
 
 
@@ -53,10 +53,10 @@ class TextQuestion(models.Model):
 
 
 class PatientTextAnswer(models.Model):
-    # doctor = models.ForeignKey(User, on_delete=models.CASCADE)
+    # doctor = models.ForeignKey("auth.User", on_delete=models.CASCADE)
     patient = models.ForeignKey(to="Patient", on_delete=models.CASCADE)
-    answer = models.CharField("Ответ", max_length=100, blank=True)
     question = models.ForeignKey("TextQuestion", related_name="textquest", on_delete=models.CASCADE)
+    answer = models.CharField("Ответ", max_length=100, blank=True)
 
     class Meta:
         verbose_name = "Ответ на текстовый вопрос"
@@ -65,7 +65,7 @@ class PatientTextAnswer(models.Model):
 
 
 class PatientAnswer(models.Model):
-    # doctor = models.ForeignKey(User, on_delete=models.CASCADE)
+    # doctor = models.ForeignKey("auth.User", on_delete=models.CASCADE)
     patient = models.ForeignKey(to="Patient", on_delete=models.CASCADE)
     question = models.ForeignKey(to="Question", on_delete=models.CASCADE)
     option = models.ForeignKey(to="Option", on_delete=models.CASCADE)
